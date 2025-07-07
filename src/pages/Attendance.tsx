@@ -1,6 +1,5 @@
 // src/pages/StudentAttendanceView.tsx
 
-// Reuse from your models
 export type AttendanceStatus = "Present" | "Absent";
 
 export interface Student {
@@ -27,7 +26,7 @@ const attendanceRecords: AttendanceData[] = [
   { reg_number: "C002", date: "2025-07-07", status: "Absent" },
 ];
 
-// Join logic
+// Merge data
 const joinedData = students.map((student) => {
   const attendance = attendanceRecords.find(
     (a) => a.reg_number === student.reg_number
@@ -41,41 +40,53 @@ const joinedData = students.map((student) => {
 
 const StudentAttendanceView = () => {
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Student Attendance</h2>
-      <div className="overflow-x-auto bg-white rounded shadow">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
-            <tr>
-              <th className="px-6 py-3 text-left">Name</th>
-              <th className="px-6 py-3 text-left">Reg No</th>
-              <th className="px-6 py-3 text-left">Class</th>
-              <th className="px-6 py-3 text-left">Date</th>
-              <th className="px-6 py-3 text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
-            {joinedData.map((student, idx) => (
-              <tr key={idx} className="hover:bg-gray-50 transition">
-                <td className="px-6 py-4">{student.title}</td>
-                <td className="px-6 py-4">{student.reg_number}</td>
-                <td className="px-6 py-4">{student.class}</td>
-                <td className="px-6 py-4">{student.date}</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      student.status === "Present"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {student.status}
-                  </span>
-                </td>
+    <div className="p-6 min-h-screen bg-gray-50">
+      <div className="max-w-5xl mx-auto">
+        <h2 className="text-3xl font-semibold text-gray-800 mb-6">
+          📋 Student Attendance Report
+        </h2>
+
+        <div className="overflow-x-auto bg-white rounded-xl shadow-md border border-gray-200">
+          <table className="min-w-full text-sm divide-y divide-gray-200">
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+              <tr>
+                <th className="px-6 py-3 text-left tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left tracking-wider">Reg No</th>
+                <th className="px-6 py-3 text-left tracking-wider">Class</th>
+                <th className="px-6 py-3 text-left tracking-wider">Date</th>
+                <th className="px-6 py-3 text-left tracking-wider">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-100">
+              {joinedData.map((student, idx) => (
+                <tr key={idx} className="hover:bg-gray-50 transition">
+                  <td className="px-6 py-4 text-gray-800">{student.title}</td>
+                  <td className="px-6 py-4 text-gray-600">{student.reg_number}</td>
+                  <td className="px-6 py-4 text-gray-600">{student.class}</td>
+                  <td className="px-6 py-4 text-gray-600">{student.date}</td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
+                        student.status === "Present"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {student.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+              {joinedData.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="text-center py-6 text-gray-500">
+                    No attendance records available.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
