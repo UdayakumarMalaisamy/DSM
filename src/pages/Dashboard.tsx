@@ -1,11 +1,18 @@
+// src/pages/Dashboard.tsx
+import React from "react";
 
-import React from 'react'
-
-const Dashboard:React.FC<{ userRole: string }> = ({ userRole })=> {
-  const role = userRole
-  return (
-    <div>Dashboard</div>
-  )
+// ✅ Allow all 4 roles
+export interface DashboardProps {
+  userRole: "admin" | "teacher" | "student" | "parent";
 }
 
-export default Dashboard
+const Dashboard: React.FC<DashboardProps> = ({ userRole }) => {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <p>Welcome, {userRole}</p>
+    </div>
+  );
+};
+
+export default Dashboard;

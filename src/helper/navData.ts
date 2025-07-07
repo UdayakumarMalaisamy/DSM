@@ -15,7 +15,7 @@ const navData =[
 
     },
      {
-        title:"studentslist",
+        title:"Studentslist",
         link:"/students",
         icon:  PersonStanding,
         role:["admin","parents","teachers"],
@@ -41,7 +41,7 @@ const navData =[
         role:["admin","parents","teachers","students"]
     },
       {
-        title:"task",
+        title:"Task",
         link:"/task",
         icon:AlarmCheck,
         role:["admin","parents","teachers","students"]
@@ -53,7 +53,7 @@ const navData =[
         role:["admin","parents","teachers","students"]
     },
  {
-        title:"teachers",
+        title:"Teachers",
         link:"/teachers",
         icon: Users,
         role:["admin","parents","students"]

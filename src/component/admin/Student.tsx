@@ -1,6 +1,6 @@
+// src/components/Students.tsx
 import { useState, type ChangeEvent } from "react";
 
-// Define generic types for reusable configuration
 export interface ColumnConfig<T> {
   label: string;
   key: keyof T | string;
@@ -10,7 +10,7 @@ export interface ColumnConfig<T> {
 
 interface StudentsProps<T extends Record<string, any>> {
   data: T[];
-  userRole: "admin" | "teacher" | "student" | "parent"; // role-based access
+  userRole: "admin" | "teacher" | "student" | "parent";
   columns: ColumnConfig<T>[];
   onChange?: (newData: T[]) => void;
   entityName?: string;
@@ -53,7 +53,7 @@ const Students = <T extends Record<string, any>>({
 
   const handleDelete = (index: number) => {
     if (!isEditable) return;
-    if (window.confirm("Are you sure you want to delete this student?")) {
+    if (window.confirm("Are you sure you want to delete this?")) {
       const updated = [...students];
       updated.splice(index, 1);
       setStudents(updated);
@@ -76,12 +76,11 @@ const Students = <T extends Record<string, any>>({
   };
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">
         {entityName} List - {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
       </h2>
 
-      {/* Add Student Button - visible only to admin/teacher */}
       {isEditable && (
         <button
           onClick={() => {
@@ -89,20 +88,24 @@ const Students = <T extends Record<string, any>>({
             setEditingIndex(null);
             setShowForm(true);
           }}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow"
         >
-          + Add Student
+          + Add {entityName}
         </button>
       )}
 
-      {/* Add/Edit Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
             <h3 className="text-xl font-semibold mb-4">
               {editingIndex !== null ? "Edit" : "Add"} {entityName}
             </h3>
-            <form onSubmit={(e) => { e.preventDefault(); handleAddOrUpdate(); }}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddOrUpdate();
+              }}
+            >
               {columns.map((col) => (
                 <div key={col.key as string} className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -154,25 +157,20 @@ const Students = <T extends Record<string, any>>({
         </div>
       )}
 
-      {/* Students Table */}
-      <div className="overflow-x-auto bg-white rounded-lg shadow overflow-hidden">
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key as string}
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
                 >
                   {col.label}
                 </th>
               ))}
-              {(userRole === "admin" || userRole === "teacher") && (
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
+              {isEditable && (
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Actions
                 </th>
               )}
@@ -182,7 +180,7 @@ const Students = <T extends Record<string, any>>({
             {students.length === 0 ? (
               <tr>
                 <td colSpan={columns.length + 1} className="text-center py-4 text-gray-500">
-                  No students found.
+                  No records found.
                 </td>
               </tr>
             ) : (
@@ -192,7 +190,7 @@ const Students = <T extends Record<string, any>>({
                     <td key={col.key as string} className="px-6 py-4 whitespace-nowrap">
                       {col.isImage ? (
                         <img
-                          src={(student[col.key] as string) || "https://via.placeholder.com/50 "}
+                          src={(student[col.key] as string) || "https://via.placeholder.com/50"}
                           alt="Profile"
                           className="w-10 h-10 rounded-full object-cover"
                         />

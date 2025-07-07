@@ -1,6 +1,6 @@
 // src/components/admin/CollegeCalendarTable.tsx
 
-import { Calendar } from "@/components/ui/calendar";
+
 import { useState } from "react";
 
 // Types
@@ -27,7 +27,7 @@ const CollegeCalendarTable: React.FC<CollegeCalendarTableProps> = ({
 }) => {
   const isEditable = userRole === "admin";
   const [events, setEvents] = useState<CalendarEvent[]>(initialEvents);
-  const [date, setDate] = useState<Date | undefined>(new Date())
+  const [] = useState<Date | undefined>(new Date())
 
   const handleInputChange = (
     id: number,
@@ -187,7 +187,6 @@ const CollegeCalendarTable: React.FC<CollegeCalendarTableProps> = ({
         <div className="mt-4 flex justify-end">
           <button
             onClick={handleSave}
-            
             className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
           >
             Save Calendar
@@ -197,13 +196,7 @@ const CollegeCalendarTable: React.FC<CollegeCalendarTableProps> = ({
     </div>
 
     <div>
-      <Calendar
-      mode="single" 
-      selected={date}
-      onSelect={setDate}
-      className="rounded-md border-amber-500 border-2shadow-sm"
-      captionLayout="dropdown"
-    />
+      
 
     </div>
     </>
