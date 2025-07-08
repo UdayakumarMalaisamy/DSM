@@ -4,12 +4,19 @@ import Students, {
 } from "../component/Teacher/Student";
 import { useState } from "react";
 
+// Initial student data and predefined classes
 const initialStudents: StudentData[] = [];
 
 const predefinedClasses = [
-  "I-CS", "II-CS", "III-CS",
-  "I-BCA", "II-BCA", "III-BCA",
-  "I-IT", "II-IT", "III-IT",
+  "I-CS",
+  "II-CS",
+  "III-CS",
+  "I-BCA",
+  "II-BCA",
+  "III-BCA",
+  "I-IT",
+  "II-IT",
+  "III-IT",
 ];
 
 export default function StudentListPage() {
@@ -23,16 +30,13 @@ export default function StudentListPage() {
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
 
   const dynamicClasses = Array.from(new Set(students.map((s) => s.class)));
-  const allClasses = Array.from(new Set([
-    ...predefinedClasses,
-    ...customClasses,
-    ...dynamicClasses,
-  ]));
+  const allClasses = Array.from(new Set([...predefinedClasses, ...customClasses, ...dynamicClasses]));
 
   const handleAddClass = () => {
-    if (newClass.trim() && !allClasses.includes(newClass.trim())) {
-      setCustomClasses((prev) => [...prev, newClass.trim()]);
-      setSelectedClass(newClass.trim());
+    const trimmed = newClass.trim();
+    if (trimmed && !allClasses.includes(trimmed)) {
+      setCustomClasses((prev) => [...prev, trimmed]);
+      setSelectedClass(trimmed);
       setNewClass("");
     }
   };
@@ -174,24 +178,34 @@ export default function StudentListPage() {
                 <input
                   value={editedStudent?.title || ""}
                   onChange={(e) =>
-                    setEditedStudent({ ...editedStudent!, title: e.target.value })
+                    setEditedStudent({
+                      ...editedStudent!,
+                      title: e.target.value,
+                    })
                   }
                   className="text-xl font-semibold mt-4 text-center"
                 />
               ) : (
-                <h3 className="text-2xl font-semibold mt-4">{profileStudent.title}</h3>
+                <h3 className="text-2xl font-semibold mt-4">
+                  {profileStudent.title}
+                </h3>
               )}
               <p className="text-gray-600">{profileStudent.class}</p>
               <div className="mt-4 w-full text-left space-y-2">
                 <div>
-                  <span className="font-semibold">Reg No:</span> {profileStudent.reg_number}
+                  <span className="font-semibold">Reg No:</span>{" "}
+                  {profileStudent.reg_number}
                 </div>
                 <div>
-                  <span className="font-semibold">Contact:</span> {editMode ? (
+                  <span className="font-semibold">Contact:</span>{" "}
+                  {editMode ? (
                     <input
                       value={editedStudent?.contact || ""}
                       onChange={(e) =>
-                        setEditedStudent({ ...editedStudent!, contact: e.target.value })
+                        setEditedStudent({
+                          ...editedStudent!,
+                          contact: e.target.value,
+                        })
                       }
                       className="border rounded px-2 py-1 w-full"
                     />
@@ -200,11 +214,15 @@ export default function StudentListPage() {
                   )}
                 </div>
                 <div>
-                  <span className="font-semibold">Email:</span> {editMode ? (
+                  <span className="font-semibold">Email:</span>{" "}
+                  {editMode ? (
                     <input
                       value={editedStudent?.email || ""}
                       onChange={(e) =>
-                        setEditedStudent({ ...editedStudent!, email: e.target.value })
+                        setEditedStudent({
+                          ...editedStudent!,
+                          email: e.target.value,
+                        })
                       }
                       className="border rounded px-2 py-1 w-full"
                     />
@@ -213,12 +231,16 @@ export default function StudentListPage() {
                   )}
                 </div>
                 <div>
-                  <span className="font-semibold">DOB:</span> {editMode ? (
+                  <span className="font-semibold">DOB:</span>{" "}
+                  {editMode ? (
                     <input
                       type="date"
                       value={editedStudent?.dob || ""}
                       onChange={(e) =>
-                        setEditedStudent({ ...editedStudent!, dob: e.target.value })
+                        setEditedStudent({
+                          ...editedStudent!,
+                          dob: e.target.value,
+                        })
                       }
                       className="border rounded px-2 py-1 w-full"
                     />
@@ -227,24 +249,15 @@ export default function StudentListPage() {
                   )}
                 </div>
                 <div>
-                  <span className="font-semibold">Blood Group:</span> {editMode ? (
-                    <input
-                      value={editedStudent?.blood || ""}
-                      onChange={(e) =>
-                        setEditedStudent({ ...editedStudent!, blood: e.target.value.toUpperCase() })
-                      }
-                      className="border rounded px-2 py-1 w-full uppercase"
-                    />
-                  ) : (
-                    profileStudent.blood || "Not specified"
-                  )}
-                </div>
-                <div>
-                  <span className="font-semibold">Address:</span> {editMode ? (
+                  <span className="font-semibold">Address:</span>{" "}
+                  {editMode ? (
                     <textarea
                       value={editedStudent?.address || ""}
                       onChange={(e) =>
-                        setEditedStudent({ ...editedStudent!, address: e.target.value })
+                        setEditedStudent({
+                          ...editedStudent!,
+                          address: e.target.value,
+                        })
                       }
                       className="border rounded px-2 py-1 w-full"
                     />

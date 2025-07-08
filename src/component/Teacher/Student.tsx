@@ -1,12 +1,7 @@
-// src/component/Teacher/Student.tsx
-
 import { useState } from "react";
 
 // ✅ Types
 export type StudentData = {
-  dob: string;
-  address: string;
-  email: string;
   title: string;
   picture: string;
   class: string;
@@ -15,10 +10,9 @@ export type StudentData = {
 };
 
 export type ColumnConfig<T> = {
-  key: keyof T | string; // Allow both keyof and static strings like "actions"
+  key: keyof T;
   label: string;
   isImage?: boolean;
-  render?: (item: T) => React.ReactNode; // Custom cell renderer
 };
 
 interface StudentsProps<T> {
@@ -164,16 +158,14 @@ export default function Students<T extends Record<string, any>>({
               <tr key={idx}>
                 {columns.map((col) => (
                   <td key={col.key as string} className="px-6 py-4 whitespace-nowrap">
-                    {col.render ? (
-                      col.render(item)
-                    ) : col.isImage ? (
+                    {col.isImage ? (
                       <img
-                        src={(item[col.key] as string) || "https://via.placeholder.com/40 "}
+                        src={(item[col.key] as string) || "https://via.placeholder.com/40"}
                         alt="profile"
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     ) : (
-                      item[col.key as keyof T]
+                      item[col.key]
                     )}
                   </td>
                 ))}

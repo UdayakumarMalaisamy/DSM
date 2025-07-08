@@ -1,6 +1,7 @@
-// src/components/Attendance.tsx
+"use client";
 import { useState } from "react";
 
+// ✅ Define AttendanceData type inline
 export interface AttendanceData {
   title: string;
   class: string;
@@ -11,64 +12,41 @@ export interface AttendanceData {
 
 interface AttendanceProps {
   data: AttendanceData[];
+  students: {
+    title: string;
+    class: string;
+    reg_number: string;
+  }[];
   userRole: "admin" | "teacher" | "student" | "parent";
   onChange?: (newData: AttendanceData[]) => void;
 }
 
-const Attendance = ({ data, userRole, onChange }: AttendanceProps) => {
+const Attendance = ({ data, students, userRole, onChange }: AttendanceProps) => {
   const [records, setRecords] = useState<AttendanceData[]>(data);
-  const [formData, setFormData] = useState<Partial<AttendanceData>>({});
-  const [showForm, setShowForm] = useState(false);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [toast, setToast] = useState("");
+  const [showDailyForm, setShowDailyForm] = useState(false);
+  const [dailyStatus, setDailyStatus] = useState<Record<string, "Present" | "Absent">>({});
 
   const isEditable = userRole === "admin" || userRole === "teacher";
-
-  const handleInput = (key: keyof AttendanceData, value: any) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleAddOrUpdate = () => {
-    const updated = [...records];
-    if (editingIndex !== null) {
-      updated[editingIndex] = formData as AttendanceData;
-    } else {
-      updated.push(formData as AttendanceData);
-    }
-    setRecords(updated);
-    onChange?.(updated);
-    setShowForm(false);
-    setEditingIndex(null);
-    setFormData({});
-    showToast(editingIndex !== null ? "Attendance updated" : "Attendance added");
-  };
-
-  const handleEdit = (index: number) => {
-    setFormData(records[index]);
-    setEditingIndex(index);
-    setShowForm(true);
-  };
-
-  const handleDelete = (index: number) => {
-    if (!isEditable) return;
-    const updated = [...records];
-    updated.splice(index, 1);
-    setRecords(updated);
-    onChange?.(updated);
-    showToast("Deleted successfully");
-  };
-
-  const handleStatusChange = (index: number, value: "Present" | "Absent") => {
-    const updated = [...records];
-    updated[index].status = value;
-    setRecords(updated);
-    onChange?.(updated);
-    showToast("Status updated");
-  };
 
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(""), 2000);
+  };
+
+  const handleDailySubmit = () => {
+    const today = new Date().toISOString().split("T")[0];
+    const newRecords = students.map((stu) => ({
+      ...stu,
+      date: today,
+      status: dailyStatus[stu.reg_number] || "Absent",
+    }));
+
+    const updated = [...records, ...newRecords];
+    setRecords(updated);
+    onChange?.(updated);
+    setShowDailyForm(false);
+    showToast("Daily attendance saved");
   };
 
   return (
@@ -84,85 +62,76 @@ const Attendance = ({ data, userRole, onChange }: AttendanceProps) => {
       {isEditable && (
         <button
           onClick={() => {
-            setFormData({});
-            setEditingIndex(null);
-            setShowForm(true);
+            setDailyStatus({});
+            setShowDailyForm(true);
           }}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-indigo-600 text-white px-4 py-2 rounded"
         >
-          + Add Attendance
+          📅 Mark Daily Attendance
         </button>
       )}
 
-      {showForm && (
+      {/* 🟡 Daily Attendance Modal */}
+      {showDailyForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleAddOrUpdate();
-              }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                placeholder="Student Name"
-                value={formData.title || ""}
-                onChange={(e) => handleInput("title", e.target.value)}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Class"
-                value={formData.class || ""}
-                onChange={(e) => handleInput("class", e.target.value)}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Reg. Number"
-                value={formData.reg_number || ""}
-                onChange={(e) => handleInput("reg_number", e.target.value)}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <input
-                type="date"
-                value={formData.date || ""}
-                onChange={(e) => handleInput("date", e.target.value)}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <select
-                value={formData.status || ""}
-                onChange={(e) => handleInput("status", e.target.value as "Present" | "Absent")}
-                className="w-full border px-3 py-2 rounded"
-                required
+          <div className="bg-white p-6 rounded-xl w-full max-w-3xl shadow-lg space-y-4">
+            <h3 className="text-xl font-semibold">Mark Today's Attendance</h3>
+            <div className="max-h-[400px] overflow-auto">
+              <table className="w-full text-sm border">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-2">Name</th>
+                    <th className="p-2">Class</th>
+                    <th className="p-2">Reg No</th>
+                    <th className="p-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {students.map((stu, index) => (
+                    <tr key={index}>
+                      <td className="p-2">{stu.title}</td>
+                      <td className="p-2">{stu.class}</td>
+                      <td className="p-2">{stu.reg_number}</td>
+                      <td className="p-2">
+                        <select
+                          value={dailyStatus[stu.reg_number] || ""}
+                          onChange={(e) =>
+                            setDailyStatus((prev) => ({
+                              ...prev,
+                              [stu.reg_number]: e.target.value as "Present" | "Absent",
+                            }))
+                          }
+                          className="border rounded px-2 py-1"
+                        >
+                          <option value="">Select</option>
+                          <option value="Present">Present</option>
+                          <option value="Absent">Absent</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowDailyForm(false)}
+                className="bg-gray-300 px-4 py-2 rounded"
               >
-                <option value="">Select Status</option>
-                <option value="Present">Present</option>
-                <option value="Absent">Absent</option>
-              </select>
-
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="px-4 py-2 bg-gray-300 rounded"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded">
-                  {editingIndex !== null ? "Update" : "Add"}
-                </button>
-              </div>
-            </form>
+                Cancel
+              </button>
+              <button
+                onClick={handleDailySubmit}
+                className="bg-green-600 text-white px-4 py-2 rounded"
+              >
+                Save Attendance
+              </button>
+            </div>
           </div>
         </div>
       )}
 
+      {/* 🔵 Existing Attendance Table */}
       <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="min-w-full text-sm divide-y divide-gray-200">
           <thead className="bg-gray-100">
@@ -172,13 +141,12 @@ const Attendance = ({ data, userRole, onChange }: AttendanceProps) => {
               <th className="px-4 py-2 text-left">Reg. No</th>
               <th className="px-4 py-2 text-left">Date</th>
               <th className="px-4 py-2 text-left">Status</th>
-              {isEditable && <th className="px-4 py-2 text-left">Actions</th>}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
             {records.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-4 text-gray-500">
+                <td colSpan={5} className="text-center py-4 text-gray-500">
                   No records.
                 </td>
               </tr>
@@ -190,43 +158,14 @@ const Attendance = ({ data, userRole, onChange }: AttendanceProps) => {
                   <td className="px-4 py-2">{att.reg_number}</td>
                   <td className="px-4 py-2">{att.date}</td>
                   <td className="px-4 py-2">
-                    {isEditable ? (
-                      <select
-                        value={att.status}
-                        onChange={(e) => handleStatusChange(index, e.target.value as "Present" | "Absent")}
-                        className={`px-2 py-1 rounded text-sm font-medium border border-gray-300 ${
-                          att.status === "Present" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        <option value="Present">Present</option>
-                        <option value="Absent">Absent</option>
-                      </select>
-                    ) : (
-                      <span
-                        className={`font-semibold ${
-                          att.status === "Present" ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        {att.status}
-                      </span>
-                    )}
+                    <span
+                      className={`font-semibold ${
+                        att.status === "Present" ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      {att.status}
+                    </span>
                   </td>
-                  {isEditable && (
-                    <td className="px-4 py-2 space-x-2">
-                      <button
-                        onClick={() => handleEdit(index)}
-                        className="text-blue-600 hover:underline"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(index)}
-                        className="text-red-600 hover:underline"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  )}
                 </tr>
               ))
             )}
