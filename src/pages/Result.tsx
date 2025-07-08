@@ -1,6 +1,6 @@
 // src/pages/teacher/ResultPage.tsx
 import React, { useState } from "react";
-import Students, { type ColumnConfig } from "../component/admin/Student";
+import Students, { type ColumnConfig } from "../component/Teacher/Student";
 
 // Result structure
 interface Result {

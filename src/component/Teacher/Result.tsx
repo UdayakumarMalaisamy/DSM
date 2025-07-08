@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Students, { type ColumnConfig } from "../admin/Student";
+import Students, { type ColumnConfig } from "./Student";
 
 interface Result {
   studentName: string;

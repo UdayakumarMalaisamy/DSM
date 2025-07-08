@@ -1,6 +1,6 @@
 // pages/teacher/TaskPage.tsx
 import React, { useState } from "react";
-import Students, { type ColumnConfig } from "../component/admin/Student"; // Keep name as Students
+import Students, { type ColumnConfig } from "../component/Teacher/Student"; // Keep name as Students
 
 interface Task {
   title: string;
